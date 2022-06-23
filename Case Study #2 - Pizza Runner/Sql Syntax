@@ -1,1 +1,74 @@
+           A. Pizza Metrics
+
+Query to get datatypes of the column:
+
+select column_name,data_type from information_schema.columns 
+where table_schema = 'pizza_runner' and table_name = 'runner_orders';
+                      
+How many pizzas were ordered?
+
+Soln : select count(*) as number_of_pizza from Customer_orders;
+
+How many unique customer orders were made?
+
+Soln : select count(distinct order_id) as unique_order from Customer_orders;
+
+How many successful orders were delivered by each runner?
+
+Soln: select runner_id,count(*) as number_of_delivery from runner_orders
+where distance != 0
+group by runner_id;
+
+How many of each type of pizza was delivered?
+
+Soln: select pizza_name,count(*) as number_of_pizza 
+from
+runner_orders a 
+left join  
+customer_orders b
+on a.order_id=b.order_id
+LEFT JOIN pizza_names c
+on b.pizza_id=c.pizza_id
+where distance != 0
+group by pizza_name;
+
+How many Vegetarian and Meatlovers were ordered by each customer?
+
+Soln: 
+select customer_id,pizza_name,count(*) as number_of_pizza 
+from
+runner_orders a 
+left join  
+customer_orders b
+on a.order_id=b.order_id
+LEFT JOIN pizza_names c
+on b.pizza_id=c.pizza_id
+where distance != 0
+group by customer_id,pizza_name;
+
+What was the maximum number of pizzas delivered in a single order?
+
+Soln:
+
+with max_piza as (
+select order_id,count(*) as number_of_pizza 
+from
+customer_orders 
+group by order_id) 
+select * from max_piza where number_of_pizza=(select max(number_of_pizza) from max_piza)
+
+NOTE: The query will give maximum number of pizza delivered as well as order id
+
+Other Way to do same thing : with max_piza as (
+select order_id,count(*) as number_of_pizza 
+from
+customer_orders 
+group by order_id
+order by 2 desc) 
+select * from max_piza a where 1-1=
+(select count(distinct number_of_pizza) from max_piza b
+where a.number_of_pizza < b.number_of_pizza)
+
+
+
 
